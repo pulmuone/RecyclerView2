@@ -50,7 +50,8 @@
                 android:id="@+id/rowEditQty"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName"
+                android:inputType="numberDecimal"
+                android:imeOptions="actionDone"
                 android:text="0" />
 
             <Button

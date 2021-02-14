@@ -1,26 +1,23 @@
 package com.example.recyclerview2
 
-import android.content.Intent
-import android.graphics.Color
-import android.graphics.ImageFormat
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.util.SparseBooleanArray
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.widget.addTextChangedListener
+import android.widget.TextView.OnEditorActionListener
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recyclerview2.databinding.ActivityMainBinding
 import com.example.recyclerview2.databinding.Row2Binding
-import com.example.recyclerview2.databinding.RowBinding
-import java.security.KeyStore
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
@@ -40,13 +37,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         for(i in 0..30) {
-            productLst.add(ProductModel(i.toLong() ,"88091234$i", "상품명 상품명 상품명 $i", i))
+            productLst.add(ProductModel(i.toLong(), "88091234$i", "상품명 상품명 상품명 $i", i))
         }
 
         //val adapter1 = RecyclerAdapter()
         binding.recycler1.adapter = adapter
 
-        productLst.add(ProductModel(999,"111111", "콜라 180ml", 56))
+        productLst.add(ProductModel(999, "111111", "콜라 180ml", 56))
         //adapter.notifyDataSetChanged()
         binding.recycler1.layoutManager = LinearLayoutManager(this)
 
@@ -101,9 +98,9 @@ class MainActivity : AppCompatActivity() {
                 row_index = holder.adapterPosition
             }
 
-            holder.rowEditQty.addTextChangedListener( object : TextWatcher {
+            holder.rowEditQty.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(p0: Editable?) {
-                    if(p0 != null && p0.toString() != "") {
+                    if (p0 != null && p0.toString() != "") {
                         //holder.adapterPosition
                         productLst[holder.adapterPosition].Qty = Integer.parseInt(p0.toString())
                     }
@@ -113,17 +110,28 @@ class MainActivity : AppCompatActivity() {
                 override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             })
 
+            holder.rowEditQty.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    //Clear focus here from edittext
+                    holder.rowEditQty.clearFocus()
+                    //holder.rowEditQty.setFocusableInTouchMode(false);
+                    //holder.rowEditQty.setFocusable(false);
+                }
+                false
+            })
+
             holder.rowEditQty.setOnFocusChangeListener { v, hasFocus ->
                 if(hasFocus) {
                     mSelectedItems.put(row_index, false)
-                    //notifyItemChanged(row_index)
+                    notifyItemChanged(row_index)
 
                     toggleItemSelected(holder.adapterPosition)
                     row_index = holder.adapterPosition
+                    Log.d("test Focus", holder.adapterPosition.toString())
                     //v.isSelected = true
                 } else {
-
                     //v.isSelected = false
+
                 }
             }
 
@@ -166,7 +174,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        fun isItemSelected(position:Int) : Boolean {
+        fun isItemSelected(position: Int) : Boolean {
             return mSelectedItems.get(position, false)
         }
 
